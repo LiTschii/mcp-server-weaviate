@@ -23,27 +23,32 @@ logger = logging.getLogger(__name__)
 
 
 def serve(
-    weaviate_url: Optional[str],
     weaviate_api_key: Optional[str], 
     search_collection_name: str,
     store_collection_name: str,
+    weaviate_url: Optional[str] = None,
     cohere_api_key: Optional[str] = None,
     openai_api_key: Optional[str] = None,
+    port: Optional[int] = 8080,
+    grpc_port: Optional[int] = 50051
 ) -> Server:
     """
     Instantiate the server and configure tools to store and find memories in Weaviate.
-    :param weaviate_url: The URL of the Weaviate server.
     :param weaviate_api_key: The API key to use for the Weaviate server.
     :param search_collection_name: The name of the collection to search from.
     :param store_collection_name: The name of the collection to store memories in.
+    :param weaviate_url: The URL of the Weaviate server.
     :param cohere_api_key: Optional API key to use Cohere embeddings.
     :param openai_api_key: Optional API key to use OpenAI embeddings.
+    :param port: Optional port for the Weaviate server.
+    :param grpc_port: Optional gRPC port for the Weaviate server.
+    :return: The configured server instance.
     """
     server = Server("weaviate")
 
     weaviate = WeaviateConnector(
-        weaviate_url, weaviate_api_key, search_collection_name, store_collection_name,
-        cohere_api_key=cohere_api_key, openai_api_key=openai_api_key
+        weaviate_api_key, search_collection_name, store_collection_name, weaviate_url=weaviate_url,
+        cohere_api_key=cohere_api_key, openai_api_key=openai_api_key, port=port, grpc_port=grpc_port
     )
 
     @server.list_tools()
@@ -161,12 +166,6 @@ def serve(
 
 @click.command()
 @click.option(
-    "--weaviate-url",
-    envvar="WEAVIATE_URL",
-    required=False,
-    help="Weaviate URL",
-)
-@click.option(
     "--weaviate-api-key",
     envvar="WEAVIATE_API_KEY", 
     required=False,
@@ -185,6 +184,12 @@ def serve(
     help="Name of collection to store memories in",
 )
 @click.option(
+    "--weaviate-url",
+    envvar="WEAVIATE_URL",
+    required=False,
+    help="Weaviate URL",
+)
+@click.option(
     "--cohere-api-key",
     envvar="COHERE_API_KEY",
     required=False,
@@ -195,6 +200,18 @@ def serve(
     envvar="OPENAI_API_KEY",
     required=False,
     help="OpenAI API key for embeddings",
+)
+@click.option(
+    "--port",
+    envvar="WEAVIATE_PORT",
+    required=False,
+    help="http port",
+)
+@click.option(
+    "--grpc_port",
+    envvar="WEAVIATE_GRPC_PORT",
+    required=False,
+    help="grpc port",
 )
 def main(
     weaviate_url: Optional[str],

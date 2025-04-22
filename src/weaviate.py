@@ -2,6 +2,7 @@ from typing import Optional, Any
 import weaviate
 from weaviate.auth import Auth
 from weaviate_agents.query import QueryAgent
+import os
 
 
 class WeaviateConnector:
@@ -45,8 +46,9 @@ class WeaviateConnector:
             headers["X-Cohere-Api-Key"] = cohere_api_key
         if openai_api_key:
             headers["X-OpenAI-Api-Key"] = openai_api_key
-
-        self._client = weaviate.connect_to_weaviate_cloud(
+        self._client = weaviate.connect_to_local(
+            port=8080,
+            grpc_port=50051,
             cluster_url=weaviate_url,
             auth_credentials=Auth.api_key(weaviate_api_key),
             headers=headers

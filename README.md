@@ -1,3 +1,5 @@
+# Modified for for using a localy hosted weavaite instance instead. Only python implementation works.
+
 # mcp-server-weaviate
 [![smithery badge](https://smithery.ai/badge/@weaviate/mcp-server-weaviate)](https://smithery.ai/server/@weaviate/mcp-server-weaviate)
 
