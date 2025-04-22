@@ -18,12 +18,14 @@ class WeaviateConnector:
 
     def __init__(
         self,
-        weaviate_url: Optional[str],
         weaviate_api_key: Optional[str],
         search_collection_name: str,
         store_collection_name: str,
+        weaviate_url: Optional[str] = None,
         cohere_api_key: Optional[str] = None,
         openai_api_key: Optional[str] = None,
+        port: Optional[int] = 8080,
+        grpc_port: Optional[int] = 50051
     ):
         if not (cohere_api_key or openai_api_key):
             raise ValueError("Either a Cohere or OpenAI API key must be provided")
@@ -47,9 +49,8 @@ class WeaviateConnector:
         if openai_api_key:
             headers["X-OpenAI-Api-Key"] = openai_api_key
         self._client = weaviate.connect_to_local(
-            port=8080,
-            grpc_port=50051,
-            cluster_url=weaviate_url,
+            port=port,
+            grpc_port=grpc_port,
             auth_credentials=Auth.api_key(weaviate_api_key),
             headers=headers
         )
